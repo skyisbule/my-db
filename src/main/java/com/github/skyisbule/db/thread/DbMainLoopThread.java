@@ -1,4 +1,4 @@
-package skyisbule.github.com.thread;
+package com.github.skyisbule.db.thread;
 
 //db的主循环线程，管理整个db
 public class DbMainLoopThread extends Thread{

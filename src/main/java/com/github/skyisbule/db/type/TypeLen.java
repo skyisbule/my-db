@@ -1,4 +1,4 @@
-package skyisbule.github.com.type;
+package com.github.skyisbule.db.type;
 
 //定义类型的byte长度
 public class TypeLen {

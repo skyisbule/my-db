@@ -1,6 +1,6 @@
-package skyisbule.github.com.io;
+package com.github.skyisbule.db.io;
 
-import skyisbule.github.com.config.Config;
+import com.github.skyisbule.db.config.Config;
 
 import java.io.File;
 import java.io.FileNotFoundException;

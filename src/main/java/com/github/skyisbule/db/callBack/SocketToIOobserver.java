@@ -1,7 +1,7 @@
-package skyisbule.github.com.callBack;
+package com.github.skyisbule.db.callBack;
 
-import skyisbule.github.com.task.IoTask;
-import skyisbule.github.com.thread.ServerSocketThread;
+import com.github.skyisbule.db.task.IoTask;
+import com.github.skyisbule.db.thread.ServerSocketThread;
 
 import java.util.HashMap;
 

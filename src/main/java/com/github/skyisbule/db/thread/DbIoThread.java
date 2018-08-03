@@ -1,9 +1,9 @@
-package skyisbule.github.com.thread;
+package com.github.skyisbule.db.thread;
 
-import skyisbule.github.com.config.Config;
-import skyisbule.github.com.io.DbRandomAccessIo;
-import skyisbule.github.com.task.IoTask;
-import skyisbule.github.com.type.IoTaskType;
+import com.github.skyisbule.db.config.Config;
+import com.github.skyisbule.db.io.DbRandomAccessIo;
+import com.github.skyisbule.db.task.IoTask;
+import com.github.skyisbule.db.type.IoTaskType;
 
 import java.io.File;
 import java.io.IOException;

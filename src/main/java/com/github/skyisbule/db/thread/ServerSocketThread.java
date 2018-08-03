@@ -1,6 +1,6 @@
-package skyisbule.github.com.thread;
+package com.github.skyisbule.db.thread;
 
-import skyisbule.github.com.task.IoTask;
+import com.github.skyisbule.db.task.IoTask;
 
 //定义serverSocket的接口
 public interface ServerSocketThread {

@@ -1,6 +1,6 @@
-package skyisbule.github.com.struct;
+package com.github.skyisbule.db.struct;
 
-import skyisbule.github.com.type.StoredType;
+import com.github.skyisbule.db.type.StoredType;
 
 //定义字段的实体
 public class DbTableField {

@@ -1,8 +1,8 @@
-package skyisbule.github.com.executor;
+package com.github.skyisbule.db.executor;
 
-import skyisbule.github.com.struct.DbTableField;
-import skyisbule.github.com.type.StoredType;
-import skyisbule.github.com.type.TypeLen;
+import com.github.skyisbule.db.struct.DbTableField;
+import com.github.skyisbule.db.type.StoredType;
+import com.github.skyisbule.db.type.TypeLen;
 
 import java.util.ArrayList;
 
@@ -36,10 +36,10 @@ public class Creater {
 
     private void getDbFields(String sql){
         boolean hasPK = false;
-        String  PK;
+        String  PK = "";
         //尝试获取主键
         if (sql.indexOf("primary key")>10){
-
+            PK = sql.substring(sql.indexOf("primary key "),sql.length());
         }
         //拿到字段们
         String fieldStr = sql.substring(sql.indexOf('('),sql.indexOf(')'));

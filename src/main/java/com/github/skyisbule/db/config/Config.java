@@ -1,4 +1,4 @@
-package skyisbule.github.com.config;
+package com.github.skyisbule.db.config;
 
 //配置文件
 public class Config {

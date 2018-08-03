@@ -1,6 +1,6 @@
-package skyisbule.github.com.task;
+package com.github.skyisbule.db.task;
 
-import skyisbule.github.com.type.IoTaskType;
+import com.github.skyisbule.db.type.IoTaskType;
 
 //定义io任务的结构
 public class IoTask {

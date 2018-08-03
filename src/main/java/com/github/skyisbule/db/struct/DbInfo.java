@@ -1,4 +1,4 @@
-package skyisbule.github.com.struct;
+package com.github.skyisbule.db.struct;
 
 import java.util.HashMap;
 import java.util.List;

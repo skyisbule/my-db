@@ -1,6 +1,4 @@
-package skyisbule.github.com.struct;
-
-import skyisbule.github.com.type.StoredType;
+package com.github.skyisbule.db.struct;
 
 import java.util.ArrayList;
 
