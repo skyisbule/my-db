@@ -3,6 +3,7 @@ package com.github.skyisbule.db.executor;
 import com.github.skyisbule.db.struct.DbTableField;
 import com.github.skyisbule.db.type.StoredType;
 import com.github.skyisbule.db.type.TypeLen;
+import com.github.skyisbule.db.util.TypeUtil;
 
 import java.util.ArrayList;
 
@@ -39,28 +40,33 @@ public class Creater {
         String  PK = "";
         //尝试获取主键
         if (sql.indexOf("primary key")>10){
-            PK = sql.substring(sql.indexOf("primary key "),sql.length());
+            PK = sql.substring(sql.indexOf("primary key ")+12,sql.length()).replace(";","");
         }
         //拿到字段们
         String fieldStr = sql.substring(sql.indexOf('('),sql.indexOf(')'));
         for (String field :fieldStr.split(",")){
-            String[] args = field.split(" ");
+            String[] args = field.split(" ");//以‘，’和‘ ’分割后拿到字段
             String fieldName = args[0];
             String fieldType = args[1];
+            String fieldLen  = "";
+            if (args.length==3)//这里判断一下是否有长度设置，如果有那么获取它。
+                fieldLen = args[2];
             //这里开始构造字段实体
             DbTableField fieldPO = new DbTableField(fieldName);
-            setTypeAndByteLenByStr(fieldType,fieldPO);
-
+            //判断一下是否是主键
+            if (fieldName.equals(PK))
+                fieldPO.setPK(true);
+            setTypeAndByteLenByStr(fieldType,fieldLen,fieldPO);
+            fields.add(fieldPO);
         }
+        //以上解析结束，接下来开始生成库信息文件 表信息文件
     }
 
-    private void setTypeAndByteLenByStr(String type,DbTableField fieldPO){
+    private void setTypeAndByteLenByStr(String type,String fieldLen,DbTableField fieldPO){
         Integer byteLen = 1;
-        //判断一下是不是char或者varchar
-        if (type.indexOf(' ')>2){
-            String strs[] = type.split(" ");
-            type    = strs[0];
-            byteLen = Integer.parseInt(strs[1]);
+        //判断一下是不是存储长度可变的类型  char 或者 varchar
+        if (TypeUtil.isVarLenType(type)){
+            byteLen = Integer.parseInt(fieldLen) * 8;//换算成底层存储的byte长度
         }
         switch (type){
             case "int":
