@@ -15,10 +15,8 @@ public class DbStruct {
 
     //key：数据库名  v：库内表结构
     public HashMap<String,HashMap<String,DbTableStruct>> dbs = new HashMap<String, HashMap<String, DbTableStruct>>();
-    //key：表名      v: 表结构实体
-    public HashMap<String,DbTableStruct> tables = new HashMap<String, DbTableStruct>();
-    //key :库名      v: 库的基本信息
-    public HashMap<String,DbInfo> dbInfoMap     = new HashMap<String, DbInfo>();
+
+
 
 
 

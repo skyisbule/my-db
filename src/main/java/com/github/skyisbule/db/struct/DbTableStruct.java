@@ -10,6 +10,7 @@ public class DbTableStruct {
     public Integer                 recordNum;
     public ArrayList<DbTableField> fields;
 
-
+    public ArrayList<String>   fieldNameList = new ArrayList<>();
+    public ArrayList<Integer>  fieldLensList = new ArrayList<>();
 
 }

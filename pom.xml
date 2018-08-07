@@ -20,5 +20,15 @@
         </plugins>
     </build>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.1.5</version>
+        </dependency>
+
+    </dependencies>
+
 
 </project>

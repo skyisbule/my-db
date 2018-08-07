@@ -1,10 +1,14 @@
 package com.github.skyisbule.db.executor;
 
+import cn.hutool.core.io.FileUtil;
+import com.github.skyisbule.db.config.Config;
+import com.github.skyisbule.db.config.DbStorageConfig;
 import com.github.skyisbule.db.struct.DbTableField;
 import com.github.skyisbule.db.type.StoredType;
 import com.github.skyisbule.db.type.TypeLen;
 import com.github.skyisbule.db.util.TypeUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -32,8 +36,10 @@ public class Creater {
         sql = sql.toLowerCase();
         this.sql = sql;
         getDbName(sql);
-
+        //todo  这里记得把库的信息存储到文件里。
+        FileUtil.touch(new File(Config.DB_ROOT_PATH +this.dbName+".table"));
     }
+
 
     private void getDbFields(String sql){
         boolean hasPK = false;
@@ -94,6 +100,24 @@ public class Creater {
                 fieldPO.setByteLen(TypeLen.TIME_STAMP);
                 break;
         }
+    }
+
+    /**
+     * 这里存储的顺序是：
+     * 删除检测位、插入时间戳、事务id、读标记、写标记、{长度位、长度位、。。。}、{数据、数据、数据。。。}
+     * 计算存储这么一条信息需要的长度
+     * @return 长度
+     */
+    private Integer computeLen(){
+        Integer total = DbStorageConfig.getTotalByteLen();
+        total     +=  fields.size()*32; //计算长度位   ： 一个长度为用一个int存储  有多少列就存多少
+        for (DbTableField field : this.fields)
+            total += field.getByteLen();//这里计算一下数据位
+        return total;
+    }
+
+    private String buildDBStorage(){
+        return "";
     }
 
     private void getDbName(String sql){
