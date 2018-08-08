@@ -61,7 +61,7 @@ public class DbIoThread extends Thread{
         }
     }
 
-    private synchronized void commit(IoTask task){
+    public synchronized void commit(IoTask task){
         queue.add(task);
     }
 
