@@ -3,7 +3,7 @@ package com.github.skyisbule.db.task;
 import java.util.HashMap;
 
 //插入任务的封装类
-public class InsertTask {
+public class InsertTask implements Task{
 
     public String                 dbName;
     public String                 tableName;

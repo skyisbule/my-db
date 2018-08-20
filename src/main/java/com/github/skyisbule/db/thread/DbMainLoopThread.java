@@ -1,7 +1,13 @@
 package com.github.skyisbule.db.thread;
 
+import com.github.skyisbule.db.task.Task;
+
+import java.util.LinkedList;
+
 //db的主循环线程，管理整个db
 public class DbMainLoopThread extends Thread{
+
+    LinkedList<Task> tasksQueue = new LinkedList<>();
 
     /**
      * 主循环的逻辑
