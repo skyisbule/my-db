@@ -19,4 +19,8 @@ public class SelectTask implements Task{
     List<Integer>     PK;       //主键  如（id =1 or id = 2....)
     List<SelectRange> ranges;   //查找范围
 
+    public List<SelectRange> getRanges(){
+        return this.ranges;
+    }
+
 }

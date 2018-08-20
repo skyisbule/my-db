@@ -3,12 +3,12 @@ package com.github.skyisbule.db.thread;
 import com.github.skyisbule.db.task.Task;
 
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 //db的主循环线程，管理整个db
 public class DbMainLoopThread extends Thread{
 
-    LinkedList<Task> tasksQueue = new LinkedList<>();
-
+    LinkedBlockingQueue<Task> tasksQueue = new LinkedBlockingQueue<>();
     /**
      * 主循环的逻辑
      * 检测事务队列是否为空
@@ -19,7 +19,14 @@ public class DbMainLoopThread extends Thread{
      * 其它线程：文件删除标记的彻底删除、日志检查点、脏页刷新
      */
     public void run(){
+        for (;;){
+            try {
+                Task task = tasksQueue.take();
 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

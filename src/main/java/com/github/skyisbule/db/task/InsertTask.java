@@ -1,6 +1,10 @@
 package com.github.skyisbule.db.task;
 
+import com.github.skyisbule.db.struct.SelectRange;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 //插入任务的封装类
 public class InsertTask implements Task{
@@ -8,6 +12,11 @@ public class InsertTask implements Task{
     public String                 dbName;
     public String                 tableName;
     public HashMap<String,Object> values;
+
+    @Override
+    public List<SelectRange> getRanges(){
+        return new ArrayList<SelectRange>();
+    }
 
     public String getDbName() {
         return dbName;
