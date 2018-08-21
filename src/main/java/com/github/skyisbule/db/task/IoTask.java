@@ -5,7 +5,7 @@ import com.github.skyisbule.db.type.IoTaskType;
 //定义io任务的结构
 public class IoTask {
 
-    public int       transactionId;
+    public Integer    transactionId;
     public String     file;
     public IoTaskType type;
     public Integer    offset;

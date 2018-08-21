@@ -9,7 +9,13 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread 
 
     }
 
+    //拿到了IO返回的东西
     public void doIoCallBack(IoTask ioTask) {
+
+    }
+
+    //代表拿到了锁，可以向IOThread提交io任务了
+    public void getLock(){
 
     }
 
