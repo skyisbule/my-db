@@ -2,8 +2,16 @@ package com.github.skyisbule.db.thread;
 
 import com.github.skyisbule.db.task.IoTask;
 
+import java.net.Socket;
+
 //定义连接客户端的监听线程，用于解析用于请求，解析sql，构造ioTask并递交给mainThread
 public class ServerSocketThreadImp extends Thread implements ServerSocketThread {
+
+    private Socket socket;
+
+    public void init(Socket socket){
+        this.socket = socket;
+    }
 
     public void run(){
 
