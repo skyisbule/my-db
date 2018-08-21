@@ -10,6 +10,6 @@ public interface ServerSocketThread {
      */
     public void doIoCallBack(IoTask ioTask);
 
-    public void getLock();
+    public void getLockSuccess();
 
 }

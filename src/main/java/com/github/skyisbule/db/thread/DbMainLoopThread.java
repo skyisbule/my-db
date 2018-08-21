@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //db的主循环线程，管理整个db
 public class DbMainLoopThread extends Thread{
 
-    LinkedBlockingQueue<Task> tasksQueue = new LinkedBlockingQueue<>();
+    private static LinkedBlockingQueue<Task> tasksQueue = new LinkedBlockingQueue<>();
     private AtomicInteger     maxIOnum   = new AtomicInteger();//最大的io线程数
     /**
      * 主循环的逻辑
@@ -41,6 +41,10 @@ public class DbMainLoopThread extends Thread{
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void commit(Task task) throws InterruptedException {
+        tasksQueue.put(task);
     }
 
 }

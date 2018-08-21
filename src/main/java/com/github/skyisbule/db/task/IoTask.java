@@ -12,4 +12,9 @@ public class IoTask {
     public byte[]     data;
     public Integer    len;
 
+    public IoTask(Integer transactionId, String file, IoTaskType type) {
+        this.transactionId = transactionId;
+        this.file = file;
+        this.type = type;
+    }
 }
