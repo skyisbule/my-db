@@ -15,7 +15,7 @@
 8. 两次写
 9. 页缓存以及替换的相关组件
  # 目前的架构图
- ![架构图](http://...)
+ ![架构图]( https://github.com/skyisbule/my-db/blob/master/pic/db_design.png )
 # db的基础
 <ul>
 	<li>目录</li>
