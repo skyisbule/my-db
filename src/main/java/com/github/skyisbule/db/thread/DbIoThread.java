@@ -2,6 +2,7 @@ package com.github.skyisbule.db.thread;
 
 import com.github.skyisbule.db.config.Config;
 import com.github.skyisbule.db.io.DbRandomAccessIo;
+import com.github.skyisbule.db.result.DBResult;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.type.IoTaskType;
 
@@ -39,6 +40,7 @@ public class DbIoThread extends Thread{
         while (true){
             try {//阻塞读取io任务
                 IoTask task = queue.take();
+                byte[] data;
                 //执行末尾插入
                 if (task.type==IoTaskType.INSERT){
                     DbRandomAccessIo dbIo = dbMap.get(task.file);
@@ -51,8 +53,10 @@ public class DbIoThread extends Thread{
                 //执行内容读取
                 }else if (task.type==IoTaskType.READ){
                     DbRandomAccessIo dbIo = dbMap.get(task.file);
-                    byte[] data = dbIo.read(task.offset,task.len);
-                }//todo 注册回调，将数据传给观察者。
+                    data = dbIo.read(task.offset,task.len);
+                }
+                //开始生成result对象
+                DBResult result = new DBResult();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (IOException e) {
