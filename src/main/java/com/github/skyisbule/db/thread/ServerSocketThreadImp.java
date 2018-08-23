@@ -50,7 +50,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread 
     }
 
     //拿到了IO返回的东西
-    public void doIoCallBack(IoTask ioTask) {
+    public void doIoCallBack(DBResult result) {
         //根据ioTask生成result
 
     }

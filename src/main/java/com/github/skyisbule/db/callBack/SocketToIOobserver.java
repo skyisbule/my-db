@@ -1,5 +1,6 @@
 package com.github.skyisbule.db.callBack;
 
+import com.github.skyisbule.db.result.DBResult;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.thread.ServerSocketThread;
 
@@ -27,11 +28,11 @@ public class SocketToIOobserver {
     /**
      * IO任务结束，返回iotask。
      * @param transactionId
-     * @param ioTask
+     * @param result
      */
-    public void commit(Integer transactionId,IoTask ioTask){
+    public void commit(Integer transactionId,DBResult result){
         ServerSocketThread thread = socketMap.get(transactionId);
-        thread.doIoCallBack(ioTask);
+        thread.doIoCallBack(result);
     }
 
     public void remove(Integer transactionId){

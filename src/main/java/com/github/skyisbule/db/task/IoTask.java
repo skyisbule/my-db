@@ -17,4 +17,52 @@ public class IoTask {
         this.file = file;
         this.type = type;
     }
+
+    public Integer getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Integer transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public IoTaskType getType() {
+        return type;
+    }
+
+    public void setType(IoTaskType type) {
+        this.type = type;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public Integer getLen() {
+        return len;
+    }
+
+    public void setLen(Integer len) {
+        this.len = len;
+    }
 }

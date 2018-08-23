@@ -71,6 +71,12 @@ public class DBResult {
         return result;
     }
 
+    public static DBResult buildEmpty(){
+        DBResult result = new DBResult();
+        result.code = 404;
+        return result;
+    }
+
     public int getCode() {
         return code;
     }

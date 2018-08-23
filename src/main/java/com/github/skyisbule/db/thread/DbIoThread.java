@@ -1,5 +1,6 @@
 package com.github.skyisbule.db.thread;
 
+import com.github.skyisbule.db.callBack.SocketToIOobserver;
 import com.github.skyisbule.db.config.Config;
 import com.github.skyisbule.db.io.DbRandomAccessIo;
 import com.github.skyisbule.db.result.DBResult;
@@ -41,22 +42,26 @@ public class DbIoThread extends Thread{
             try {//阻塞读取io任务
                 IoTask task = queue.take();
                 byte[] data;
+                DBResult result = DBResult.buildEmpty();
                 //执行末尾插入
                 if (task.type==IoTaskType.INSERT){
                     DbRandomAccessIo dbIo = dbMap.get(task.file);
-                    int len = dbIo.getLen();
+                    int len = dbIo.getLen();//这个是文件的末尾哈
                     dbIo.write(len,task.data);
+                    result = DBResult.buildInsert(task.getTransactionId());
                 //执行内容中间的更新
                 }else if (task.type==IoTaskType.UPDATE){
                     DbRandomAccessIo dbIo = dbMap.get(task.file);
                     dbIo.write(task.offset,task.data);
+                    result = DBResult.buildUpdate(task.getTransactionId());
                 //执行内容读取
-                }else if (task.type==IoTaskType.READ){
+                }else if (task.type==IoTaskType.READ || task.getType() == IoTaskType.SELECT){
                     DbRandomAccessIo dbIo = dbMap.get(task.file);
                     data = dbIo.read(task.offset,task.len);
+                    result = DBResult.buildSelect(task.getTransactionId(),data);
                 }
-                //开始生成result对象
-                DBResult result = new DBResult();
+                //开始返回result对象
+                SocketToIOobserver.getInstances().commit(task.getTransactionId(),result);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (IOException e) {
