@@ -80,6 +80,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
             }
             //走到这里就代表结果反回了  这里将result递交给selecter 获取最终响应结果
             Selecter selecter = new Selecter();
+            //拿到响应结果就可以生成串写回给用户了
         }
 
 
