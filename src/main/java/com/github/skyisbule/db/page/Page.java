@@ -8,5 +8,53 @@ public class Page {
     int minId;       //最小的id号
     int maxId;       //最大的记录号
     int usedSpace;   //已使用的空间   单位为bit
+    byte[] data;
 
+    public int getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(int pageId) {
+        this.pageId = pageId;
+    }
+
+    public int getRecordNum() {
+        return recordNum;
+    }
+
+    public void setRecordNum(int recordNum) {
+        this.recordNum = recordNum;
+    }
+
+    public int getMinId() {
+        return minId;
+    }
+
+    public void setMinId(int minId) {
+        this.minId = minId;
+    }
+
+    public int getMaxId() {
+        return maxId;
+    }
+
+    public void setMaxId(int maxId) {
+        this.maxId = maxId;
+    }
+
+    public int getUsedSpace() {
+        return usedSpace;
+    }
+
+    public void setUsedSpace(int usedSpace) {
+        this.usedSpace = usedSpace;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }
