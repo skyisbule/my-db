@@ -1,7 +1,7 @@
 package com.github.skyisbule.db.thread;
 
 import com.github.skyisbule.db.callBack.SocketToIOobserver;
-import com.github.skyisbule.db.config.Config;
+import com.github.skyisbule.db.config.BaseConfig;
 import com.github.skyisbule.db.io.DbRandomAccessIo;
 import com.github.skyisbule.db.result.DBResult;
 import com.github.skyisbule.db.task.IoTask;
@@ -15,13 +15,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class DbIoThread extends Thread{
 
-    private LinkedBlockingQueue<IoTask>  queue  = new LinkedBlockingQueue<IoTask>(Config.IO_LINKED_BLOCK_QUEUE_SIZE);//io任务的阻塞队列
+    private LinkedBlockingQueue<IoTask>  queue  = new LinkedBlockingQueue<IoTask>(BaseConfig.IO_LINKED_BLOCK_QUEUE_SIZE);//io任务的阻塞队列
     //private boolean isDone = false;//run任务是否正在执行即队列是否被消费结束，true是在执行完毕，即run已退出，false是正在执行。
     private Map<String,DbRandomAccessIo> dbMap  = new HashMap<String, DbRandomAccessIo>(); //存储io的实例
 
     //初始化io实例
     public void init(){
-        String dbRootPath = Config.DB_ROOT_PATH;
+        String dbRootPath = BaseConfig.DB_ROOT_PATH;
         File path = new File(dbRootPath);
         for (String files : path.list()){
             DbRandomAccessIo file = new DbRandomAccessIo(files);

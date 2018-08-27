@@ -1,6 +1,6 @@
 package com.github.skyisbule.db.io;
 
-import com.github.skyisbule.db.config.Config;
+import com.github.skyisbule.db.config.BaseConfig;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ public class DbRandomAccessIo {
 
     public DbRandomAccessIo(String fileName){
         try {
-            String filePath = Config.DB_ROOT_PATH;
+            String filePath = BaseConfig.DB_ROOT_PATH;
             file = new RandomAccessFile(filePath +File.pathSeparator+fileName, "rw");
         } catch (FileNotFoundException e) {
             e.printStackTrace();

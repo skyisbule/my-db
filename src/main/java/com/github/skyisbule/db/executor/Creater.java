@@ -1,7 +1,7 @@
 package com.github.skyisbule.db.executor;
 
 import cn.hutool.core.io.FileUtil;
-import com.github.skyisbule.db.config.Config;
+import com.github.skyisbule.db.config.BaseConfig;
 import com.github.skyisbule.db.config.DbStorageConfig;
 import com.github.skyisbule.db.struct.DbTableField;
 import com.github.skyisbule.db.type.StoredType;
@@ -37,7 +37,7 @@ public class Creater {
         this.sql = sql;
         getDbName(sql);
         //todo  这里记得把库的信息存储到文件里。
-        FileUtil.touch(new File(Config.DB_ROOT_PATH +this.dbName+".table"));
+        FileUtil.touch(new File(BaseConfig.DB_ROOT_PATH +this.dbName+".table"));
     }
 
 
