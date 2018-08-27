@@ -7,7 +7,9 @@ public class Page {
     int recordNum;   //记录总数
     int minId;       //最小的id号
     int maxId;       //最大的记录号
-    int usedSpace;   //已使用的空间   单位为bit
+    int usedSpace;   //已使用的空间   单位为byte
+    int beginByte;   //文件中开始的byte位
+    int endByte;     //文件中结束的byte位
     byte[] data;
 
     public int getPageId() {
