@@ -12,6 +12,7 @@ public class SparseIndex implements Index {
     ArrayList<Page> pages = new ArrayList<>();
     int maxId;
 
+
     @Override
     public Page getPageByPK(int keyId) {
         Page page = new Page();

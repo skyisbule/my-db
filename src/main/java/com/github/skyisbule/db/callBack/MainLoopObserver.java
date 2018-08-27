@@ -17,8 +17,8 @@ public class MainLoopObserver{
     }
 
     public static void callBack(int transcationId){
-        socketMap.get(transcationId).getLock();
+        socketMap.get(transcationId).getLockSuccess();
     }
-    
+
 
 }
