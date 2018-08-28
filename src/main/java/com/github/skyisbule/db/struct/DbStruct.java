@@ -14,10 +14,14 @@ import java.util.HashMap;
 public class DbStruct {
 
     //key：数据库名  v：库内表结构
-    public HashMap<String,HashMap<String,DbTableStruct>> dbs = new HashMap<String, HashMap<String, DbTableStruct>>();
+    public static HashMap<String,HashMap<String,DbTableStruct>> dbs = new HashMap<>();
 
+    public static void add(String dbName,HashMap<String,DbTableStruct> tableInfo){
+        dbs.put(dbName,tableInfo);
+    }
 
-
-
+    public static DbTableStruct getTableStructByName(String dbName,String tableName){
+        return dbs.get(dbName).get(tableName);
+    }
 
 }
