@@ -11,6 +11,8 @@ public class DbTableStruct {
     public String                  tableName;
     public Integer                 recordNum;
     public ArrayList<DbTableField> fields;
+    public Integer                 recordLen;//该记录的byte长度
+    public Integer                 fieldNum;
 
     public ArrayList<String>     fieldNameList = new ArrayList<>();
     public ArrayList<StoredType> fieldTypeList = new ArrayList<>();
@@ -62,5 +64,21 @@ public class DbTableStruct {
 
     public void setFieldLensList(ArrayList<Integer> fieldLensList) {
         this.fieldLensList = fieldLensList;
+    }
+
+    public Integer getRecordLen() {
+        return recordLen;
+    }
+
+    public void setRecordLen(Integer recordLen) {
+        this.recordLen = recordLen;
+    }
+
+    public Integer getFieldNum() {
+        return fieldNum;
+    }
+
+    public void setFieldNum(Integer fieldNum) {
+        this.fieldNum = fieldNum;
     }
 }

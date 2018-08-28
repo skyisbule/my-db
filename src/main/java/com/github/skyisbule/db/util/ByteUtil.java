@@ -17,6 +17,13 @@ public class ByteUtil {
         return arr;
     }
 
+    public static int byteToInt4(byte[] bytes){
+            return   bytes[3] & 0xFF |
+                    (bytes[2] & 0xFF) << 8 |
+                    (bytes[1] & 0xFF) << 16 |
+                    (bytes[0] & 0xFF) << 24;
+    }
+
     public static byte[] getTimeStampByte4(){
         Integer time = (int)System.currentTimeMillis();
         return intToByte4(time);
