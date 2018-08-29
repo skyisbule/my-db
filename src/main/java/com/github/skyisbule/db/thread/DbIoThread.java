@@ -3,6 +3,7 @@ package com.github.skyisbule.db.thread;
 import com.github.skyisbule.db.callBack.SocketToIOobserver;
 import com.github.skyisbule.db.config.BaseConfig;
 import com.github.skyisbule.db.io.DbRandomAccessIo;
+import com.github.skyisbule.db.page.Page;
 import com.github.skyisbule.db.result.DBResult;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.type.IoTaskType;
@@ -10,14 +11,16 @@ import com.github.skyisbule.db.type.IoTaskType;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class DbIoThread extends Thread{
 
-    private LinkedBlockingQueue<IoTask>  queue  = new LinkedBlockingQueue<IoTask>(BaseConfig.IO_LINKED_BLOCK_QUEUE_SIZE);//io任务的阻塞队列
+    private LinkedBlockingQueue<List<IoTask>>  queue  = new LinkedBlockingQueue<List<IoTask>>(BaseConfig.IO_LINKED_BLOCK_QUEUE_SIZE);//io任务的阻塞队列
     //private boolean isDone = false;//run任务是否正在执行即队列是否被消费结束，true是在执行完毕，即run已退出，false是正在执行。
-    private Map<String,DbRandomAccessIo> dbMap  = new HashMap<String, DbRandomAccessIo>(); //存储io的实例
+    private Map<String,DbRandomAccessIo> dbIoMap  = new HashMap<String, DbRandomAccessIo>(); //存储io的实例
 
     //初始化io实例
     public void init(){
@@ -25,7 +28,7 @@ public class DbIoThread extends Thread{
         File path = new File(dbRootPath);
         for (String files : path.list()){
             DbRandomAccessIo file = new DbRandomAccessIo(files);
-            dbMap.put(files,file);
+            dbIoMap.put(files,file);
         }
     }
 
@@ -40,38 +43,45 @@ public class DbIoThread extends Thread{
     public void run(){
         while (true){
             try {//阻塞读取io任务
-                IoTask task = queue.take();
+                List<IoTask> tasks = queue.take();
                 byte[] data;
                 DBResult result = DBResult.buildEmpty();
-                //执行末尾插入
-                if (task.type==IoTaskType.INSERT){
-                    DbRandomAccessIo dbIo = dbMap.get(task.file);
-                    int len = dbIo.getLen();//这个是文件的末尾哈
-                    dbIo.write(len,task.data);
-                    result = DBResult.buildInsert(task.getTransactionId());
-                //执行内容中间的更新
-                }else if (task.type==IoTaskType.UPDATE){
-                    DbRandomAccessIo dbIo = dbMap.get(task.file);
-                    dbIo.write(task.offset,task.data);
-                    result = DBResult.buildUpdate(task.getTransactionId());
-                //执行内容读取
-                }else if (task.type==IoTaskType.READ || task.getType() == IoTaskType.SELECT){
-                    DbRandomAccessIo dbIo = dbMap.get(task.file);
-                    data = dbIo.read(task.offset,task.len);
-                    result = DBResult.buildSelect(task.getTransactionId(),data);
+                switch (tasks.get(0).getType()){
+                    case INSERT:
+                        IoTask insertTask = tasks.get(0);
+                        DbRandomAccessIo insertIO = dbIoMap.get(insertTask.getFile());
+                        insertIO.write(insertTask.offset,insertTask.data);
+                        result = DBResult.buildUpdate(insertTask.getTransactionId());
+                        break;
+                    case SELECT:
+                        DbRandomAccessIo selectIO = dbIoMap.get(tasks.get(0).getFile());
+                        List<Page> pages = new LinkedList<>();
+                        for (IoTask task : tasks) {
+                            byte[] dataTemp = selectIO.read(task.getOffset(),task.getLen());
+                            Page page = new Page();
+                            page.setPageId(task.getPageId());
+                            page.setData(dataTemp);
+                            pages.add(page);
+                        }
+                        result = DBResult.buildSelect(tasks.get(0).getTransactionId(),pages);
+                        break;
+                    case UPDATE:
+                        DbRandomAccessIo updateIO = dbIoMap.get(tasks.get(0).getFile());
+                        for (IoTask task : tasks) {
+                            updateIO.write(task.getOffset(),task.getData());
+                        }
+                        result = DBResult.buildUpdate(tasks.get(0).getTransactionId());
                 }
                 //开始返回result对象
-                SocketToIOobserver.getInstances().commit(task.getTransactionId(),result);
+                SocketToIOobserver.getInstances().commit(tasks.get(0).getTransactionId(),result);
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public synchronized void commit(IoTask task){
-        queue.add(task);
+    public synchronized void commit(List<IoTask> tasks){
+        queue.add(tasks);
     }
 
 }

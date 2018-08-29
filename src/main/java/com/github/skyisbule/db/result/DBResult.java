@@ -1,5 +1,9 @@
 package com.github.skyisbule.db.result;
 
+import com.github.skyisbule.db.page.Page;
+
+import java.util.List;
+
 //定义返回的结果
 public class DBResult {
 
@@ -8,6 +12,7 @@ public class DBResult {
     public String       queryResult;
     public int          transactionId;
     public byte[]       data;
+    public List<Page>   page;
     public int          affectedNum;
 
     public DBResult(){}
@@ -28,14 +33,14 @@ public class DBResult {
         this.setQueryResult(queryResult);
     }
 
-    public static DBResult buildSelect(int transcationId,byte[] data){
+    public static DBResult buildSelect(int transactionId,List<Page> pages){
         DBResult result = new DBResult();
         result.setCode(200);
-        result.setTranscationId(transcationId);
+        result.setTranscationId(transactionId);
         result.setType(DBResultType.SELECT);
-        if (data!=null && data.length!=0){
+        if (pages!=null && pages.size()!=0){
             result.setQueryResult("query ok!");
-            result.setData(data);
+            result.setPage(pages);
         }else{
             result.setQueryResult("query ok!");
             result.setCode(201);//代表数据是空的
@@ -115,5 +120,29 @@ public class DBResult {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public List<Page> getPage() {
+        return page;
+    }
+
+    public void setPage(List<Page> page) {
+        this.page = page;
+    }
+
+    public int getAffectedNum() {
+        return affectedNum;
+    }
+
+    public void setAffectedNum(int affectedNum) {
+        this.affectedNum = affectedNum;
     }
 }

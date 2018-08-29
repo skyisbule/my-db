@@ -5,7 +5,7 @@ public enum IoTaskType {
 
     INSERT,
     UPDATE,
-    READ,
+    DELETE,
     SELECT
 
 }

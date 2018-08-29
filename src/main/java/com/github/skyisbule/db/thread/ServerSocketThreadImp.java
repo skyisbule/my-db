@@ -14,6 +14,7 @@ import com.github.skyisbule.db.type.IoTaskType;
 import com.github.skyisbule.db.util.ByteUtil;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -93,8 +94,11 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
             int PKpos = 20 + struct.getFieldNum()*4;
             ByteUtil.arraycopy(insertByteData,PKpos,ByteUtil.intToByte4(task.PKID));
         }
+        //todo 这里要通过page中心拿到文件末尾
+        ArrayList<IoTask> taskList = new ArrayList<>();
         IoTask ioTask = new IoTask(transactionId,struct.getRealFileName(),IoTaskType.INSERT);
-        ioThread.commit(ioTask);
+        taskList.add(ioTask);
+        ioThread.commit(taskList);
         while (!getResult){
             Thread.sleep(1);
         }
@@ -120,7 +124,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         //这里先构造 crud Task   获取最重要的两个信息：表  加锁范围  递交给mainThread
         SelectTask task = new SelectTask(transactionId,"test",true);
         //构造完获取锁的任务后，需要通过段页表获取你需要读取的块的位置，即byte位  并基于此构造IO TASK 递交给io线程去读
-        ioTaskTemp = new IoTask(transactionId,"test",IoTaskType.READ);
+        ioTaskTemp = new IoTask(transactionId,"test",IoTaskType.SELECT);
         DbMainLoopThread.commit(task);
         //轮训状态 一旦获取了锁就递交给io线程
         while (!getLock){
@@ -138,6 +142,12 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         LinkedList<HashMap<String, Object>> results = selecter.doSelect(dbName,tableName,result.data);
     }
 
+    //todo  一个难点 -》  通过page转成ioTask
+    private void doDelete(String sql) throws InterruptedException{
+        sql = "update test set age = 12";
+        boolean doFilter = false;
+
+    }
 
     //拿到了IO返回的东西
     public void doIoCallBack(DBResult result) {
@@ -149,7 +159,6 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
     //代表拿到了锁，可以向IOThread提交io任务了
     public void getLockSuccess(){
         getLock = true;
-        ioThread.commit(ioTaskTemp);
     }
 
 }

@@ -11,6 +11,7 @@ public class IoTask {
     public Integer    offset;
     public byte[]     data;
     public Integer    len;
+    public Integer    pageId;
 
     public IoTask(Integer transactionId, String file, IoTaskType type) {
         this.transactionId = transactionId;
@@ -64,5 +65,13 @@ public class IoTask {
 
     public void setLen(Integer len) {
         this.len = len;
+    }
+
+    public Integer getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(Integer pageId) {
+        this.pageId = pageId;
     }
 }
