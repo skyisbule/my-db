@@ -24,4 +24,9 @@ public class DbStruct {
         return dbs.get(dbName).get(tableName);
     }
 
+    //todo 设计问题  以后要改成真正的获取最大id而不是自增
+    public static Integer getTableMaxId(String dbName,String tableName){
+        return dbs.get(dbName).get(tableName).recordNum+1;
+    }
+
 }

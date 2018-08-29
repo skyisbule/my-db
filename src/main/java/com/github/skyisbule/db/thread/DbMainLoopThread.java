@@ -2,6 +2,8 @@ package com.github.skyisbule.db.thread;
 
 import com.github.skyisbule.db.callBack.MainLoopObserver;
 import com.github.skyisbule.db.concurrent.CentLocker;
+import com.github.skyisbule.db.struct.DbStruct;
+import com.github.skyisbule.db.task.InsertTask;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.task.SelectTask;
 import com.github.skyisbule.db.task.Task;
@@ -41,7 +43,13 @@ public class DbMainLoopThread extends Thread{
                         break;
                     case INSERT:
                         if (CentLocker.getLock(task)){
-
+                            InsertTask task1 = (InsertTask)task;
+                            //代表用户没有输入id，所以id应该自增
+                            if (task1.getPKID() == null){
+                                Integer pk = DbStruct.getTableMaxId(task1.getDbName(),task1.getTableName());
+                                task1.setPKID(pk);
+                            }
+                            MainLoopObserver.callBack(task1.transcationId);
                         }
                 }
 

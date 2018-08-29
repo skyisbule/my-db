@@ -1,13 +1,17 @@
 package com.github.skyisbule.db.thread;
 
+import com.github.skyisbule.db.exception.InsertErrorEception;
 import com.github.skyisbule.db.executor.Inserter;
 import com.github.skyisbule.db.executor.Selecter;
 import com.github.skyisbule.db.page.SegmentPageContainer;
 import com.github.skyisbule.db.result.DBResult;
+import com.github.skyisbule.db.struct.DbStruct;
+import com.github.skyisbule.db.struct.DbTableStruct;
 import com.github.skyisbule.db.task.InsertTask;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.task.SelectTask;
 import com.github.skyisbule.db.type.IoTaskType;
+import com.github.skyisbule.db.util.ByteUtil;
 
 import java.net.Socket;
 import java.util.HashMap;
@@ -64,7 +68,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
 
     }
 
-    private void doInsert(String sql) throws InterruptedException {
+    private boolean doInsert(String sql) throws InterruptedException {
         //先模拟一下sql
         sql = "insert into test values(1,\'sky\',21)";
         String tableName = "test";
@@ -72,6 +76,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         insertDataMap.put("id",1);
         insertDataMap.put("user_name","sky");
         insertDataMap.put("age",21);
+        boolean isAutoIncreasePK = true;
         //接下来开始构造任务
         Inserter inserter = new Inserter();
         byte[] insertByteData = inserter.doInsert(transcathionId,dbName,tableName,insertDataMap);
@@ -83,10 +88,29 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         }
         //已拿到锁  开始递交IOTask
         getLock = false;
+        DbTableStruct struct = DbStruct.getTableStructByName(dbName,tableName);
+        if (isAutoIncreasePK){
+            int PKpos = 20 + struct.getFieldNum()*4;
+            ByteUtil.arraycopy(insertByteData,PKpos,ByteUtil.intToByte4(task.PKID));
+        }
+        IoTask ioTask = new IoTask(transcathionId,struct.getRealFileName(),IoTaskType.INSERT);
+        ioThread.commit(ioTask);
         while (!getResult){
             Thread.sleep(1);
         }
         getResult = false;
+        //拿到了结果
+        if (result.getCode()==200) {
+            return true;
+        }
+        else {
+            try {
+                throw new InsertErrorEception(result.getCode(),result.getQueryResult());
+            } catch (InsertErrorEception insertErrorEception) {
+                insertErrorEception.printStackTrace();
+            }
+        }
+        return false;
     }
 
     private void doSelect(String sql) throws InterruptedException{

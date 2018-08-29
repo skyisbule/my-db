@@ -18,6 +18,11 @@ public class DbTableStruct {
     public ArrayList<StoredType> fieldTypeList = new ArrayList<>();
     public ArrayList<Integer>    fieldLensList = new ArrayList<>();
 
+    //todo 以后记得改成返回真正的文件名  预计: 库名_表名.tab
+    public String getRealFileName(){
+        return this.tableName;
+    }
+
     public String getTableName() {
         return tableName;
     }
