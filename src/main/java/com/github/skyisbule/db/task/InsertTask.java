@@ -9,13 +9,28 @@ import java.util.List;
 //插入任务的封装类
 public class InsertTask implements Task{
 
+    public Integer                transcationId;
     public String                 dbName;
     public String                 tableName;
-    public HashMap<String,Object> values;
+    public Integer                PKID;
+    public CRUDTaskType           taskType = CRUDTaskType.INSERT;
+
+    public InsertTask(){}
+
+    public InsertTask(Integer transcationId,String dbName,String tableName){
+        this.dbName = dbName;
+        this.tableName = tableName;
+        this.transcationId = transcationId;
+    }
 
     @Override
     public List<SelectRange> getRanges(){
         return new ArrayList<SelectRange>();
+    }
+
+    @Override
+    public CRUDTaskType getCRUDtype() {
+        return this.taskType;
     }
 
     public String getDbName() {
@@ -34,11 +49,19 @@ public class InsertTask implements Task{
         this.tableName = tableName;
     }
 
-    public HashMap<String, Object> getValues() {
-        return values;
+    public Integer getTranscationId() {
+        return transcationId;
     }
 
-    public void setValues(HashMap<String, Object> values) {
-        this.values = values;
+    public void setTranscationId(Integer transcationId) {
+        this.transcationId = transcationId;
+    }
+
+    public Integer getPKID() {
+        return PKID;
+    }
+
+    public void setPKID(Integer PKID) {
+        this.PKID = PKID;
     }
 }

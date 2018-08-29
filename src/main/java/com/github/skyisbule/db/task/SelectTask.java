@@ -18,6 +18,8 @@ public class SelectTask implements Task{
     boolean           isRange;  //是否是范围，若不是则代表查询指定主键的值
     List<Integer>     PK;       //主键  如（id =1 or id = 2....)
     List<SelectRange> ranges;   //查找范围
+    CRUDTaskType      crudTaskType = CRUDTaskType.SELECT;
+
 
     public SelectTask(Integer transcationId, String tableName, boolean selectAll) {
         this.transcationId = transcationId;
@@ -27,6 +29,11 @@ public class SelectTask implements Task{
 
     public List<SelectRange> getRanges(){
         return this.ranges;
+    }
+
+    @Override
+    public CRUDTaskType getCRUDtype() {
+        return this.crudTaskType;
     }
 
     public Integer getTranscationId() {

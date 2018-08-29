@@ -28,15 +28,23 @@ public class DbMainLoopThread extends Thread{
         for (;;){
             try {
                 Task task = tasksQueue.take();
-                if (task instanceof SelectTask){
-                    if (CentLocker.getLock(task)){//如果拿到锁，则处理后递交给ioThread 然后由ioThread掉用locker释放锁以及将结果回调给观察者
-                        Integer transcationId = ((SelectTask) task).getTranscationId();
-                        MainLoopObserver.callBack(transcationId);//回调 告知用户线程可以递交ioTask
-                    }else {//如果没能拿到锁，则直接将此任务丢掉队列末尾（todo 这里在以后要优化，加入权值保证公平性）
+                switch (task.getCRUDtype()){
+                    case SELECT:
+                        if (task instanceof SelectTask){
+                            if (CentLocker.getLock(task)){//如果拿到锁，则处理后递交给ioThread 然后由ioThread掉用locker释放锁以及将结果回调给观察者
+                                Integer transcationId = ((SelectTask) task).getTranscationId();
+                                MainLoopObserver.callBack(transcationId);//回调 告知用户线程可以递交ioTask
+                            }else {//如果没能拿到锁，则直接将此任务丢掉队列末尾（todo 这里在以后要优化，加入权值保证公平性）
+                                this.getLockfail(task);
+                            }
+                        }
+                        break;
+                    case INSERT:
+                        if (CentLocker.getLock(task)){
 
-                        tasksQueue.put(task);
-                    }
+                        }
                 }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -47,4 +55,7 @@ public class DbMainLoopThread extends Thread{
         tasksQueue.put(task);
     }
 
+    private void getLockfail(Task task) throws InterruptedException {
+        tasksQueue.put(task);
+    }
 }

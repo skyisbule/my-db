@@ -1,14 +1,17 @@
 package com.github.skyisbule.db.thread;
 
+import com.github.skyisbule.db.executor.Inserter;
 import com.github.skyisbule.db.executor.Selecter;
 import com.github.skyisbule.db.page.SegmentPageContainer;
 import com.github.skyisbule.db.result.DBResult;
+import com.github.skyisbule.db.task.InsertTask;
 import com.github.skyisbule.db.task.IoTask;
 import com.github.skyisbule.db.task.SelectTask;
 import com.github.skyisbule.db.type.IoTaskType;
 
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 //定义连接客户端的监听线程，用于解析用于请求，解析sql，构造ioTask并递交给mainThread
 
@@ -29,8 +32,8 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
     private IoTask     ioTaskTemp;
     private DBResult   result;
     private DbIoThread ioThread;
-    private boolean    getLock;
-    private boolean    getResult;
+    private volatile   boolean    getLock;
+    private volatile   boolean    getResult;
     private boolean    isTranscation;
     private String     dbName;
     private SegmentPageContainer pageContainer;
@@ -61,7 +64,32 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
 
     }
 
-    private void doSelect(String sql){
+    private void doInsert(String sql) throws InterruptedException {
+        //先模拟一下sql
+        sql = "insert into test values(1,\'sky\',21)";
+        String tableName = "test";
+        HashMap<String,Object> insertDataMap = new HashMap<>();
+        insertDataMap.put("id",1);
+        insertDataMap.put("user_name","sky");
+        insertDataMap.put("age",21);
+        //接下来开始构造任务
+        Inserter inserter = new Inserter();
+        byte[] insertByteData = inserter.doInsert(transcathionId,dbName,tableName,insertDataMap);
+        //开始尝试获取锁
+        InsertTask task = new InsertTask(transcathionId,dbName,tableName);
+        DbMainLoopThread.commit(task);
+        while (!getLock){
+            Thread.sleep(1);
+        }
+        //已拿到锁  开始递交IOTask
+        getLock = false;
+        while (!getResult){
+            Thread.sleep(1);
+        }
+        getResult = false;
+    }
+
+    private void doSelect(String sql) throws InterruptedException{
         //这里先模拟解析到了用户的sql
         sql = "select * from test";
         String tableName = "test";
@@ -69,36 +97,27 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         SelectTask task = new SelectTask(transcathionId,"test",true);
         //构造完获取锁的任务后，需要通过段页表获取你需要读取的块的位置，即byte位  并基于此构造IO TASK 递交给io线程去读
         ioTaskTemp = new IoTask(transcathionId,"test",IoTaskType.READ);
-        try {
-            DbMainLoopThread.commit(task);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        DbMainLoopThread.commit(task);
         //轮训状态 一旦获取了锁就递交给io线程
         while (!getLock){
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Thread.sleep(1);
         }
+        getLock = false;
         //走到这里代表已经获取了锁并递交了io任务  开始轮训结果状态  看看结果返回没
         while(!getResult){
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Thread.sleep(1);
         }
+        getResult = false;
         //走到这里就代表结果反回了  这里将result递交给selecter 获取最终响应结果
         Selecter selecter = new Selecter();
         //拿到响应结果就可以生成串写回给用户了
-        HashMap<String,Object> results = selecter.doSelect(dbName,tableName,result.data);
+        LinkedList<HashMap<String, Object>> results = selecter.doSelect(dbName,tableName,result.data);
     }
 
 
     //拿到了IO返回的东西
     public void doIoCallBack(DBResult result) {
+        this.getResult = true;
         //根据ioTask生成result
         this.result = result;
     }

@@ -9,4 +9,6 @@ public interface Task {
 
     public List<SelectRange> getRanges();
 
+    public CRUDTaskType      getCRUDtype();
+
 }
