@@ -1,10 +1,8 @@
 package com.github.skyisbule.db.executor;
 
 import com.github.skyisbule.db.config.DbStorageConfig;
-import com.github.skyisbule.db.page.Page;
 import com.github.skyisbule.db.struct.DbStruct;
 import com.github.skyisbule.db.struct.DbTableStruct;
-import com.github.skyisbule.db.task.InsertTask;
 import com.github.skyisbule.db.util.ByteUtil;
 
 import java.util.ArrayList;

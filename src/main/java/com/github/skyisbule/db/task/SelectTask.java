@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class SelectTask implements Task{
 
-    Integer           transcationId;//事务id
+    Integer           transactionId;//事务id
     boolean           hasFilter;//是否有过滤条件  目前不用
     String            tableName; //表名
     boolean           selectAll;//是否查询全部，即查询条件中是否有“主键”的过滤条件
@@ -22,7 +22,7 @@ public class SelectTask implements Task{
 
 
     public SelectTask(Integer transcationId, String tableName, boolean selectAll) {
-        this.transcationId = transcationId;
+        this.transactionId = transcationId;
         this.tableName = tableName;
         this.selectAll = selectAll;
     }
@@ -37,11 +37,11 @@ public class SelectTask implements Task{
     }
 
     public Integer getTranscationId() {
-        return transcationId;
+        return transactionId;
     }
 
     public void setTranscationId(Integer transcationId) {
-        this.transcationId = transcationId;
+        this.transactionId = transcationId;
     }
 
     public boolean isHasFilter() {

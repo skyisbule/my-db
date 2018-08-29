@@ -6,7 +6,7 @@ public class DBResult {
     public int          code;
     public DBResultType type;
     public String       queryResult;
-    public int          transcationId;
+    public int          transactionId;
     public byte[]       data;
     public int          affectedNum;
 
@@ -16,7 +16,7 @@ public class DBResult {
         this.code = code;
         this.type = type;
         this.queryResult = queryResult;
-        this.transcationId = transcationId;
+        this.transactionId = transcationId;
     }
 
     public void error(int code){
@@ -102,11 +102,11 @@ public class DBResult {
     }
 
     public int getTranscationId() {
-        return transcationId;
+        return transactionId;
     }
 
     public void setTranscationId(int transcationId) {
-        this.transcationId = transcationId;
+        this.transactionId = transcationId;
     }
 
     public byte[] getData() {

@@ -32,7 +32,7 @@ import java.util.LinkedList;
 public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
 
     private Socket     socket;
-    private int        transcathionId;
+    private int        transactionId;
     private IoTask     ioTaskTemp;
     private DBResult   result;
     private DbIoThread ioThread;
@@ -44,7 +44,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
 
     public void init(Socket socket,int trascathionId){
         this.socket = socket;
-        this.transcathionId = trascathionId;
+        this.transactionId = trascathionId;
         this.getLock   = false;
         this.getResult = false;
     }
@@ -79,9 +79,9 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         boolean isAutoIncreasePK = true;
         //接下来开始构造任务
         Inserter inserter = new Inserter();
-        byte[] insertByteData = inserter.doInsert(transcathionId,dbName,tableName,insertDataMap);
+        byte[] insertByteData = inserter.doInsert(transactionId,dbName,tableName,insertDataMap);
         //开始尝试获取锁
-        InsertTask task = new InsertTask(transcathionId,dbName,tableName);
+        InsertTask task = new InsertTask(transactionId,dbName,tableName);
         DbMainLoopThread.commit(task);
         while (!getLock){
             Thread.sleep(1);
@@ -93,7 +93,7 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
             int PKpos = 20 + struct.getFieldNum()*4;
             ByteUtil.arraycopy(insertByteData,PKpos,ByteUtil.intToByte4(task.PKID));
         }
-        IoTask ioTask = new IoTask(transcathionId,struct.getRealFileName(),IoTaskType.INSERT);
+        IoTask ioTask = new IoTask(transactionId,struct.getRealFileName(),IoTaskType.INSERT);
         ioThread.commit(ioTask);
         while (!getResult){
             Thread.sleep(1);
@@ -118,9 +118,9 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
         sql = "select * from test";
         String tableName = "test";
         //这里先构造 crud Task   获取最重要的两个信息：表  加锁范围  递交给mainThread
-        SelectTask task = new SelectTask(transcathionId,"test",true);
+        SelectTask task = new SelectTask(transactionId,"test",true);
         //构造完获取锁的任务后，需要通过段页表获取你需要读取的块的位置，即byte位  并基于此构造IO TASK 递交给io线程去读
-        ioTaskTemp = new IoTask(transcathionId,"test",IoTaskType.READ);
+        ioTaskTemp = new IoTask(transactionId,"test",IoTaskType.READ);
         DbMainLoopThread.commit(task);
         //轮训状态 一旦获取了锁就递交给io线程
         while (!getLock){

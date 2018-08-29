@@ -16,8 +16,8 @@ public class MainLoopObserver{
         socketMap.put(transactionId,thread);
     }
 
-    public static void callBack(int transcationId){
-        socketMap.get(transcationId).getLockSuccess();
+    public static void callBack(int transactionId){
+        socketMap.get(transactionId).getLockSuccess();
     }
 
 
