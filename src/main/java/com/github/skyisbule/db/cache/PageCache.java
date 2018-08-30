@@ -1,5 +1,10 @@
 package com.github.skyisbule.db.cache;
 
+import com.github.skyisbule.db.page.Page;
+
 //页缓存组件
-public class PageCache {
+public interface PageCache {
+
+    public Page getPageByPK(String dbName,String tableName,Integer PK);
+
 }
