@@ -1,6 +1,7 @@
 package com.github.skyisbule.db.page;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,14 @@ public class SegmentPageContainer {
 
     public void add(String dbName,HashMap<String,List<Segment>> tableMap){
         dbMap.put(dbName,tableMap);
+    }
+
+    public List<Page> getAllPageByTableName(String dbName,String tableName){
+        LinkedList<Page> pages = new LinkedList<>();
+        for (Segment segment : dbMap.get(dbName).get(tableName)) {
+            pages.addAll(segment.getPages());
+        }
+        return pages;
     }
 
     //todo 这里后期要进行查询优化

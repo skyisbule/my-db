@@ -1,6 +1,5 @@
 package com.github.skyisbule.db.thread;
 
-import com.github.skyisbule.db.callBack.MainLoopObserver;
 import com.github.skyisbule.db.exception.InsertErrorEception;
 import com.github.skyisbule.db.executor.Inserter;
 import com.github.skyisbule.db.executor.Selecter;
@@ -42,13 +41,13 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
     private DbIoThread ioThread;
     private volatile   boolean    getLock;
     private volatile   boolean    getResult;
-    private boolean    isTranscation;
+    private boolean    isTransaction;
     private String     dbName;
     private SegmentPageContainer pageContainer;
 
-    public void init(Socket socket,int trascathionId){
+    public void init(Socket socket,int transactionId){
         this.socket = socket;
-        this.transactionId = trascathionId;
+        this.transactionId = transactionId;
         this.getLock   = false;
         this.getResult = false;
     }
@@ -57,11 +56,10 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
      * 这里需要区分是普通sql还是事务
      * 获取sql   构造对应的 crud task
      */
-    //todo   未来再把这里的流程拆一拆 拆成单个函数
     public void run(){
         //先判断是否是事务
 
-        if (isTranscation){
+        if (isTransaction){
 
 
         }else{//不是事务  则可以简化流程 可以不用再接收socket的信息了
