@@ -13,6 +13,7 @@ public class DbTableStruct {
     public ArrayList<DbTableField> fields;
     public Integer                 recordLen;//该记录的byte长度
     public Integer                 fieldNum;
+    public Integer                 maxPK;
 
     public ArrayList<String>     fieldNameList = new ArrayList<>();
     public ArrayList<StoredType> fieldTypeList = new ArrayList<>();
@@ -85,5 +86,13 @@ public class DbTableStruct {
 
     public void setFieldNum(Integer fieldNum) {
         this.fieldNum = fieldNum;
+    }
+
+    public Integer getMaxPK() {
+        return maxPK;
+    }
+
+    public void setMaxPK(Integer maxPK) {
+        this.maxPK = maxPK;
     }
 }

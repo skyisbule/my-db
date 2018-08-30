@@ -59,4 +59,20 @@ public class Page {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public int getBeginByte() {
+        return beginByte;
+    }
+
+    public void setBeginByte(int beginByte) {
+        this.beginByte = beginByte;
+    }
+
+    public int getEndByte() {
+        return endByte;
+    }
+
+    public void setEndByte(int endByte) {
+        this.endByte = endByte;
+    }
 }

@@ -10,10 +10,7 @@ import com.github.skyisbule.db.type.IoTaskType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class DbIoThread extends Thread{
@@ -81,6 +78,11 @@ public class DbIoThread extends Thread{
     }
 
     public synchronized void commit(List<IoTask> tasks){
+        queue.add(tasks);
+    }
+    public synchronized void commit(IoTask task){
+        ArrayList<IoTask> tasks = new ArrayList<>();
+        tasks.add(task);
         queue.add(tasks);
     }
 

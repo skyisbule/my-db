@@ -1,8 +1,11 @@
 package com.github.skyisbule.db.thread;
 
+import com.github.skyisbule.db.callBack.MainLoopObserver;
 import com.github.skyisbule.db.exception.InsertErrorEception;
 import com.github.skyisbule.db.executor.Inserter;
 import com.github.skyisbule.db.executor.Selecter;
+import com.github.skyisbule.db.executor.Updater;
+import com.github.skyisbule.db.page.Page;
 import com.github.skyisbule.db.page.SegmentPageContainer;
 import com.github.skyisbule.db.result.DBResult;
 import com.github.skyisbule.db.struct.DbStruct;
@@ -95,10 +98,8 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
             ByteUtil.arraycopy(insertByteData,PKpos,ByteUtil.intToByte4(task.PKID));
         }
         //todo 这里要通过page中心拿到文件末尾
-        ArrayList<IoTask> taskList = new ArrayList<>();
         IoTask ioTask = new IoTask(transactionId,struct.getRealFileName(),IoTaskType.INSERT);
-        taskList.add(ioTask);
-        ioThread.commit(taskList);
+        ioThread.commit(ioTask);
         while (!getResult){
             Thread.sleep(1);
         }
@@ -146,7 +147,38 @@ public class ServerSocketThreadImp extends Thread implements ServerSocketThread{
     private void doDelete(String sql) throws InterruptedException{
         sql = "update test set age = 12";
         boolean doFilter = false;
+        boolean usePk    = false;
+        String tableName = "test";
+        if (usePk){
 
+        }else{//不使用主键，需要查询所有的
+            DbTableStruct struct  = DbStruct.getTableStructByName(dbName,tableName);
+            int totalRowsNum      = struct.getMaxPK();//要对0-》这里的记录进行加锁
+            SelectTask selectTask = new SelectTask(transactionId,tableName,true);
+            DbMainLoopThread.commit(selectTask);
+            while (!getLock){
+                Thread.sleep(1);
+            }
+            Selecter selecter = new Selecter();
+            IoTask ioTask = new IoTask(transactionId,struct.getRealFileName(),IoTaskType.SELECT);
+            ArrayList<IoTask> ioTasks = new ArrayList<>(1);
+            ioTasks.add(ioTask);
+            ioThread.commit(ioTasks);
+            while (!getResult){
+                Thread.sleep(1);
+            }
+            //拿到了所有的结果  开始执行更新
+            Updater updater = new Updater();
+            for (Page page : result.getPage()) {
+                byte[] newByteData  = updater.doUpdate(selecter.doSelect(dbName,tableName,page.getData()));
+                IoTask updateIoTask = new IoTask(transactionId,struct.getRealFileName(),IoTaskType.UPDATE);
+                updateIoTask.setData(newByteData);
+                updateIoTask.setOffset(page.getBeginByte());
+                updateIoTask.setOffset(page.getEndByte());
+                ioThread.commit(updateIoTask);
+            }
+
+        }
     }
 
     //拿到了IO返回的东西
