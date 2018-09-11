@@ -6,6 +6,7 @@ import com.github.skyisbule.db.config.LogConfig;
 
 /**
  * 这个类用于记录执行过的sql
+ * < 事务id,时间戳，操作的sql >
  */
 public class SqlLog {
 
