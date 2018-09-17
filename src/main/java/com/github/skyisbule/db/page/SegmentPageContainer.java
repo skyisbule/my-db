@@ -1,5 +1,10 @@
 package com.github.skyisbule.db.page;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.db.ds.pooled.DbConfig;
+import com.github.skyisbule.db.config.BaseConfig;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +42,26 @@ public class SegmentPageContainer {
             }
         }
         return page;
+    }
+
+    public boolean createBlankPage(String dbName,String tableName){
+        Page page = new Page();
+        byte[] data = new byte[16 * 1024];
+        page.setData(data);
+        String realFile = BaseConfig.DB_ROOT_PATH + dbName + "_" +tableName + ".db";
+        File file  = new File(realFile);
+        boolean returnFlage = false;
+        try {
+            if (!file.exists()){
+                FileUtil.writeBytes(data,realFile);
+            }
+            int maxPos = (int)file.getTotalSpace();
+            FileUtil.writeBytes(data,file,maxPos,16*1024,true);
+            returnFlage = true;
+        }catch (Exception e){
+            System.out.println("create blank page error!");
+        }
+       return returnFlage;
     }
 
 }
