@@ -1,7 +1,6 @@
 package com.github.skyisbule.db.page;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.db.ds.pooled.DbConfig;
 import com.github.skyisbule.db.config.BaseConfig;
 
 import java.io.File;
@@ -11,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 //段页式管理容器
+/**
+ * 查找的时候在这里拿到跟id相关的page 处理后再根据page的offset写回文件
+ */
 public class SegmentPageContainer {
 
     HashMap<String,Map<String,List<Segment>>> dbMap = new HashMap<>();//key：数据库名 value：table->segment->page
@@ -44,24 +46,31 @@ public class SegmentPageContainer {
         return page;
     }
 
+    public Page getMaxPage(String dbName,String tableName){
+        List<Segment> segmentList = dbMap.get(dbName).get(tableName);
+        Segment segment  = segmentList.get(segmentList.size()-1);
+        List<Page> pages = segment.getPages();
+        return pages.get(pages.size()-1);
+    }
+
     public boolean createBlankPage(String dbName,String tableName){
         Page page = new Page();
         byte[] data = new byte[16 * 1024];
         page.setData(data);
         String realFile = BaseConfig.DB_ROOT_PATH + dbName + "_" +tableName + ".db";
         File file  = new File(realFile);
-        boolean returnFlage = false;
+        boolean returnFlag = false;
         try {
             if (!file.exists()){
                 FileUtil.writeBytes(data,realFile);
             }
             int maxPos = (int)file.getTotalSpace();
             FileUtil.writeBytes(data,file,maxPos,16*1024,true);
-            returnFlage = true;
+            returnFlag = true;
         }catch (Exception e){
             System.out.println("create blank page error!");
         }
-       return returnFlage;
+       return returnFlag;
     }
 
 }
